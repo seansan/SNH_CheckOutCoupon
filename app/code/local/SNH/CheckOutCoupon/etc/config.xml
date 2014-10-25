@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <SNH_CheckOutCoupon>
+            <version>0.1.0</version>
+        </SNH_CheckOutCoupon>
+    </modules>
+    <frontend>
+        <routers>
+            <ajaxcoupon>
+                <use>standard</use>
+                <args>
+                    <module>SNH_CheckOutCoupon</module>
+                    <frontName>ajaxcoupon</frontName>
+                </args>
+            </ajaxcoupon>
+        </routers>
+        <layout>
+            <updates>
+                <ajaxcoupon>
+                    <file>ajaxcoupon.xml</file>
+                </ajaxcoupon>
+            </updates>
+        </layout>
+    </frontend>
+    
+    <global>
+		<helpers>
+			<ajaxcoupon>
+			<class>SNH_CheckOutCoupon_Helper</class>
+			</ajaxcoupon>
+		</helpers>
+    </global>
+
+    <adminhtml>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <snh_settings>
+                                            <title>SNH Settings</title>
+                                        </snh_settings>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

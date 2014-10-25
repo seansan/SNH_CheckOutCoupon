@@ -1,0 +1,132 @@
+<?php $enabled = Mage::getStoreConfig('snh_settings/messages/coupon_enabled', Mage::app()->getStore()); ?>
+
+
+
+<?php if($enabled): ?>
+
+	<div class="buttons-set" id="checkout-discount-toggle">
+	<p class="f-left">Heeft u een kortingscode? <span onclick="$('discount-coupon-form-container').toggle();">Klik om in te voeren</span></p>
+	</div>
+    
+    <div class="cart" id="discount-coupon-form-container" style="display: none">
+    <div class="cart-collaterals">
+    <div class="grid_4" style="max-width: 300px; width: 98%">
+        <div class="cart-block cart-coupon">
+
+	<form id="discount-coupon-form" action="<?php echo $this->getUrl('ajaxcoupon/index/customcouponreviewPost') ?>" method="post">
+        <div class="discount">
+        <h2><?php echo $this->__('Discount Codes') ?></h2>
+        <div class="discount-form">
+            <label for="coupon_code"><?php echo $this->__('Enter your coupon code if you have one.') ?></label>
+            <input type="hidden" name="remove" id="remove-coupone" value="0" />
+            <div class="input-box" style="max-width: 300px; width: 98%">
+            <input class="input-text" id="coupon_code" name="coupon_code" value="<?php echo $this->escapeHtml($this->getCouponCode()) ?>" />
+            <br/><span id="msg" style="font-size: 10px; margin: 10px auto; color:red; display:none;"></span>
+	    </div>
+            
+	    <div class="buttons-set">
+            <span class="ajax_loading" id='ajax_loading9' style='display: hidden'><img src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"/></span>
+
+		<button type="button" title="<?php echo $this->__('Apply Coupon') ?>" class="button addcoupon" value="<?php echo $this->__('Apply Coupon') ?>" <?php if(strlen($this->getCouponCode())): ?>style='display: none'<?php endif;?>><span><span><?php echo $this->__('Apply Coupon'); ?></span></span></button>
+                
+                &nbsp; <button type="button" title="<?php echo $this->__('Cancel Coupon') ?>" class="button removecoupon" value="<?php echo $this->__('Cancel Coupon') ?>" <?php if(!strlen($this->getCouponCode())): ?>style='display: none'<?php endif;?> ><span><span><?php echo $this->__('Cancel Coupon') ?></span></span></button>
+            </div>
+                    </div>
+        </div>
+        </form>
+
+    <script type="text/javascript">
+    jQuery(document).ready(function () {
+    
+    var strApplied = "<?php echo $this->__('Couponcode(s) active and applied') ?>";
+    var strTimeout = "<?php echo $this->__('Couponcode can not be validated') ?>";
+    
+    <?php if(strlen($this->getCouponCode())): ?>
+	jQuery('#msg').html(strApplied);
+	jQuery('#msg').show();
+    <?php endif;?>
+
+        jQuery('.addcoupon').live('click', function () {
+            jQuery('#remove-coupone').val('0');
+            jQuery('#msg').hide();
+            jQuery('#coupon_code').removeClass('validation-failed');
+            if (jQuery('#coupon_code').val() === '') {
+                jQuery('#coupon_code').addClass('validation-failed');
+                return false;
+            }
+            jQuery('#ajax_loading9').show();
+            jQuery.ajax({
+                url: jQuery("form#discount-coupon-form").attr('action'),
+                dataType: 'json',
+                data: jQuery("form#discount-coupon-form").serializeArray(),
+                type: 'POST',
+		error: function(){
+		  jQuery('#msg').html(strTimeout);
+		  jQuery('#msg').show();
+		},
+                success: function (data) {
+                    jQuery('#ajax_loading9').hide();
+                    if (jQuery('#checkout-review-table-wrapper')) {
+                        jQuery('#checkout-review-table-wrapper').replaceWith(data.review);
+                    }
+                    if(data.status == 'SUCCESS'){
+                        jQuery('.removecoupon').show();
+                        jQuery('.addcoupon').hide();
+                    }
+                    if (data.msg) {
+		    jQuery('#msg').html(data.msg);
+		    jQuery('#msg').show();
+		    }
+		    jQuery("form#discount-coupon-form input").blur();
+                },
+		timeout: 3000 // sets timeout to 3 seconds
+            });
+        });
+        jQuery('.removecoupon').live('click', function () {
+            jQuery('#remove-coupone').val('1');
+            jQuery('#msg').hide();
+            jQuery('#coupon_code').removeClass('validation-failed');
+            jQuery('#ajax_loading9').show();
+            jQuery.ajax({
+                url: jQuery("form#discount-coupon-form").attr('action'),
+                dataType: 'json',
+                data: jQuery("form#discount-coupon-form").serializeArray(),
+                type: 'POST',
+                error: function(){
+		  jQuery('#msg').html(strTimeout);
+		  jQuery('#msg').show();
+		},
+		success: function (data) {
+                    jQuery('#ajax_loading9').hide();
+                    if (jQuery('#checkout-review-table-wrapper')) {
+                        jQuery('#checkout-review-table-wrapper').replaceWith(data.review);
+                    }
+                    if (data.msg) {
+		    jQuery('#msg').html(data.msg);
+		    jQuery('#msg').show();
+		    }
+                    if(data.status == 'SUCCESS'){
+                        jQuery('.addcoupon').show();
+                        jQuery('.removecoupon').hide();
+                    }
+                    jQuery("form#discount-coupon-form input").blur();
+                },
+		timeout: 3000 // sets timeout to 3 seconds
+            });
+        });
+        jQuery('#discount-coupon-form').submit(function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            jQuery('button:visible', this).eq(0).click();
+        });
+    });
+    
+
+
+    </script>
+
+    </div>
+    </div>
+    </div>
+    </div>
+<?php endif; ?>

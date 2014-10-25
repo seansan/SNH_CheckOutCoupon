@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+   
+    <ajaxcoupon_index_customcouponreviewpost translate="label">
+        <label>One Page Checkout Overview</label>
+        <!-- Mage_Checkout -->
+        <remove name="right"/>
+        <remove name="left"/>
+
+        <block type="checkout/onepage_review_info" name="roots" template="ajaxcoupon/checkout/totalsblock.phtml">
+            <action method="addItemRender"><type>default</type><block>checkout/cart_item_renderer</block><template>checkout/onepage/review/item.phtml</template></action>
+            <action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>checkout/onepage/review/item.phtml</template></action>
+            <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>checkout/onepage/review/item.phtml</template></action>
+            <block type="checkout/cart_totals" name="checkout.onepage.review.info.totals" as="totals" template="checkout/onepage/review/totals.phtml"/>
+        </block>
+    </ajaxcoupon_index_customcouponreviewpost>
+
+
+	<checkout_onepage_review>
+		<reference name="checkout.onepage.review.info.items.after">
+			<block type="checkout/cart_coupon" name="checkout.cart.coupon" as="coupon" template="ajaxcoupon/checkout/coupon.phtml" />
+		</reference>
+	</checkout_onepage_review>
+
+</layout> 
